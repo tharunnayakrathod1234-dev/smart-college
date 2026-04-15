@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Student Dashboard</title>
+
+<style>
+body { font-family: Arial; margin:0; background:#f4f6f9; }
+
+/* Sidebar */
+.sidebar {
+    width:220px; height:100vh; background:#2c3e50;
+    color:white; position:fixed; padding-top:20px;
+}
+.sidebar h2 { text-align:center; }
+.sidebar a {
+    display:block; color:white; padding:12px; text-decoration:none;
+}
+.sidebar a:hover { background:#34495e; }
+
+/* Main */
+.main { margin-left:220px; padding:20px; }
+
+.card {
+    background:white; padding:20px; margin-bottom:20px;
+    border-radius:10px; box-shadow:0 0 10px #ccc;
+}
+
+button {
+    padding:10px; background:#3498db;
+    color:white; border:none; border-radius:5px;
+}
+
+table {
+    width:100%; border-collapse:collapse;
+}
+table, th, td {
+    border:1px solid #ccc; padding:10px;
+}
+</style>
+
+</head>
+
+<body>
+<div class="header">
+   
+    <h2>Student Dashboard - JNTUH UCEJ</h2>
+</div>
+
+<div class="sidebar">
+    <h2>Student</h2>
+    <a href="#" onclick="showSection('complaint')">Complaint</a>
+    <a href="#" onclick="showSection('attendance')">Attendance</a>
+    <a href="#" onclick="showSection('results')">Results</a>
+    <a href="#" onclick="showSection('examFee')">Exam Fee</a>
+    <a href="#" onclick="showSection('messFee')">Mess Fee</a>
+    <a href="login.html">Logout</a>
+</div>
+
+<div class="main">
+
+<!-- Complaint -->
+<!-- Submit Complaint -->
+<div id="complaint">
+
+    <!-- Submit Complaint -->
+    <div class="card">
+        <h2>Submit Complaint</h2>
+        <textarea id="complaintText" placeholder="Write complaint..."></textarea>
+        <button onclick="submitComplaint()">Submit</button>
+        <p id="complaintMsg"></p>
+    </div>
+
+    <!-- Track Complaints -->
+    <div class="card">
+        <h2>Track Complaints</h2>
+        <button onclick="loadComplaints()">View My Complaints</button>
+        <ul id="complaintList"></ul>
+    </div>
+
+</div>
+
+<!-- Attendance -->
+<div id="attendance" class="card" style="display:none;">
+    <h2>Attendance</h2>
+    <table>
+        <tr><th>Subject</th><th>Attendance</th></tr>
+        <tr><td>Database Management System</td><td>85%</td></tr>
+        <tr><td>Software Engineering</td><td>78%</td></tr>
+        <tr><td>Operating Systems</td><td>92%</td></tr>
+        <tr><td>Discete mathematic</td><td>73%</td></tr>
+    </table>
+</div>
+
+<!-- Results -->
+<div id="results" class="card" style="display:none;">
+    <h2>Exam Results</h2>
+    <table>
+        <tr><th>Subject</th><th>Marks</th></tr>
+        <tr><td>Math</td><td>90</td></tr>
+        <tr><td>Physics</td><td>85</td></tr>
+        <tr><td>Computer</td><td>95</td></tr>
+    </table>
+</div>
+
+<!-- Exam Fee -->
+<div id="examFee" class="card" style="display:none;">
+    <h2>Pay Exam Fee</h2>
+    <p>Amount: 1000</p>
+    <button onclick="payExamFee()">Pay Now</button>
+    <p id="examMsg"></p>
+</div>
+
+<!-- Mess Fee -->
+<div id="messFee" class="card" style="display:none;">
+    <h2>Pay Mess Fee</h2>
+    <p>Amount:3350</p>
+    <button onclick="payMessFee()">Pay Now</button>
+    <p id="messMsg"></p>
+</div>
+
+</div>
+
+<script>
+function showSection(section) {
+    const sections = ["complaint","attendance","results","examFee","messFee"];
+    sections.forEach(id => {
+        document.getElementById(id).style.display = "none";
+    });
+    document.getElementById(section).style.display = "block";
+}
+
+function submitComplaint() {
+    let text = document.getElementById("complaintText").value;
+    if (text === "") {
+        alert("Enter complaint");
+    } else {
+        document.getElementById("complaintMsg").innerText = "Complaint submitted!";
+    }
+}
+
+function payExamFee() {
+    document.getElementById("examMsg").innerText = "✅ Exam fee paid successfully!";
+}
+
+function payMessFee() {
+    document.getElementById("messMsg").innerText = "✅ Mess fee paid successfully!";
+}
+
+
+function login() {
+
+  const roll = document.getElementById("loginRoll").value.trim();
+  const password = document.getElementById("loginPassword").value.trim();
+  const role = document.getElementById("loginRole").value;
+
+  let users = JSON.parse(localStorage.getItem("users")) || [];
+
+  let user = users.find(u => {
+    if (role === "student") {
+      return u.rollNumber === roll &&
+             u.password === password &&
+             u.role === role;
+    } else {
+      return u.password === password &&
+             u.role === role;
+    }
+  });
+
+  if (!user) {
+    alert("Invalid Login ❌");
+    return;
+  }
+
+  // ✅ SAVE USER
+  localStorage.setItem("currentUser", JSON.stringify(user));
+  window.location.href = "pages/student.html";
+  // ✅ REDIRECT
+  if (role === "student") {
+    window.location.href = "student.html";
+  } 
+  else if (role === "faculty") {
+    window.location.href = "faculty.html";
+  } 
+  else {
+    window.location.href = "admin.html";
+  }
+}
+
+
+</script>
+
+</body>
+</html>

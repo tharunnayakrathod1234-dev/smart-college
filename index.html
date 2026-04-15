@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>College Login</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f2f2f2;
+}
+
+.header {
+    text-align: center;
+    padding: 20px;
+}
+
+.container {
+    width: 350px;
+    margin: auto;
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px #ccc;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background: #007bff;
+    color: white;
+    border: none;
+}
+
+.captcha {
+    display: flex;
+    justify-content: space-between;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+<!-- ✅ FIXED IMAGE PATH -->
+
+
+ <h2 style="color: rgb(236, 14, 14);"> JAWAHARLAL NEHRU TECHNOLOGICAL UNIVERSITY HYDERABAD </h2> 
+ <h3 style="color: rgba(243, 3, 191, 0.932);"> UNIVERSITY COLLEGE OF ENGINEERING JAGTIAL (JNTUH UCEJ) </h3>
+  <p style="color: rgb(21, 20, 20);"> Nachupally (Kondagattu), Kodimial Mandal,<br> Jagtial Dist., Telangana – 505501 </p> </div>
+
+</div>
+
+<div class="container">
+    <h2>Login</h2>
+
+    <form onsubmit="return loginUser()">
+
+        <input type="email" id="email" placeholder="Enter Email" required>
+        <input type="password" id="password" placeholder="Enter Password" required>
+
+        <select id="role" required>
+            <option value="">Select Role</option>
+            <option value="student">Student</option>
+            <option value="faculty">Faculty</option>
+            <option value="admin">Admin</option>
+        </select>
+
+        <!-- ✅ Roll Number -->
+        <div id="rollDiv" style="display:none;">
+            <input type="text" id="rollNumber" placeholder="Enter Roll Number">
+        </div>
+
+        <div class="captcha">
+            <span id="captchaText"></span>
+            <button type="button" onclick="generateCaptcha()">↻</button>
+        </div>
+
+        <input type="text" id="captchaInput" placeholder="Enter Captcha" required>
+
+        <button type="submit">Login</button>
+
+    </form>
+         <div class="link">
+             <a href="#">Forgot Password?</a>
+         </div>
+         <hr>
+
+     <script>
+
+let captcha;
+
+// CAPTCHA
+function generateCaptcha() {
+    captcha = Math.random().toString(36).substring(2, 7);
+    document.getElementById("captchaText").innerText = captcha;
+}
+generateCaptcha();
+
+// ✅ SHOW ROLL FIELD
+document.getElementById("role").addEventListener("change", function() {
+    let rollDiv = document.getElementById("rollDiv");
+
+    if (this.value === "student") {
+        rollDiv.style.display = "block";
+    } else {
+        rollDiv.style.display = "none";
+    }
+});
+
+// LOGIN
+function loginUser() {
+
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const role = document.getElementById("role").value;
+    const roll = document.getElementById("rollNumber").value;
+    const captchaInput = document.getElementById("captchaInput").value;
+
+    if (captchaInput !== captcha) {
+        alert("Invalid Captcha!");
+        return false;
+    }
+
+    // ✅ Roll validation
+    if (role === "student" && roll === "") {
+        alert("Roll Number required!");
+        return false;
+    }
+
+    // Redirect
+    if (role === "student") {
+        window.location.href = "student.html";
+    } else if (role === "faculty") {
+        window.location.href = "faculty.html";
+    } else {
+        window.location.href = "admin.html";
+    }
+
+    return false;
+}
+</script>
+<script src="script.js"></script>
+</body>
+</html>

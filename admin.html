@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Principal Dashboard</title>
+
+<style>
+body { font-family: Arial; margin:0; background:#f4f6f9; }
+
+/* Sidebar */
+.sidebar {
+    width:250px; height:100vh;
+    background:#1a252f; color:white;
+    position:fixed; padding-top:20px;
+}
+.sidebar h2 { text-align:center; }
+.sidebar a {
+    display:block; padding:12px;
+    color:white; text-decoration:none;
+}
+.sidebar a:hover { background:#2c3e50; }
+
+/* Main */
+.main { margin-left:250px; padding:20px; }
+
+.card {
+    background:white; padding:20px;
+    margin-bottom:20px;
+    border-radius:10px;
+    box-shadow:0 0 10px #ccc;
+}
+
+input, textarea {
+    width:100%; padding:10px; margin:8px 0;
+}
+
+button {
+    padding:10px;
+    background:#e74c3c;
+    color:white;
+    border:none;
+    border-radius:5px;
+}
+
+table {
+    width:100%; border-collapse:collapse;
+}
+table, th, td {
+    border:1px solid #ccc;
+    padding:10px;
+}
+</style>
+
+</head>
+
+<body>
+<div class="header">
+    
+    <h2>Principal Dashboard - JNTUH UCEJ</h2>
+</div>
+
+<div class="sidebar">
+    <h2>Principal</h2>
+    <a onclick="show('students')">Students</a>
+    <a onclick="show('faculty')">Faculty</a>
+    <a onclick="show('attendance')">Attendance</a>
+    <a onclick="show('results')">Results</a>
+    <a onclick="show('complaints')">Complaints</a>
+    <a onclick="show('fees')">Fees</a>
+    <a onclick="show('reports')">Reports</a>
+    <a onclick="show('notify')">Notifications</a>
+    <a onclick="show('search')">Search Student</a>
+
+
+    <a href="login.html">Logout</a>
+</div>
+
+<div class="main">
+
+
+<!-- Students -->
+<div id="students" class="card">
+    <h2>All Students</h2>
+    <input placeholder="Add Student Name">
+    <button>Add Student</button>
+</div>
+
+<!-- Faculty -->
+<div id="faculty" class="card" style="display:none;">
+    <h2>All Faculty</h2>
+    <input placeholder="Add Faculty Name">
+    <button>Add Faculty</button>
+</div>
+
+<!-- Attendance -->
+<div id="attendance" class="card" style="display:none;">
+    <h2>College Attendance</h2>
+    <table>
+        <tr><th>Student</th><th>Status</th></tr>
+        <tr><td>Ravi</td><td>Present</td></tr>
+        <tr><td>Sita</td><td>Absent</td></tr>
+    </table>
+</div>
+
+<!-- Results -->
+<div id="results" class="card" style="display:none;">
+    <h2>All Exam Results</h2>
+    <table>
+        <tr><th>Student</th><th>Marks</th></tr>
+        <tr><td>Ravi</td><td>90</td></tr>
+        <tr><td>Sita</td><td>85</td></tr>
+    </table>
+</div>
+
+<!-- Complaints -->
+<div id="complaints" class="card" style="display:none;">
+    <h2>All Complaints</h2>
+    <table>
+        <tr><th>Student</th><th>Issue</th></tr>
+        <tr><td>Ravi</td><td>Library issue</td></tr>
+    </table>
+</div>
+
+<!-- Fees -->
+<div id="fees" class="card" style="display:none;">
+    <h2>Fees Management</h2>
+    <p>Exam Fees: ₹50,000</p>
+    <p>Mess Fees: ₹1,20,000</p>
+</div>
+
+<!-- Reports -->
+<div id="reports" class="card" style="display:none;">
+    <h2>Reports</h2>
+    <p>✔ Attendance Analysis</p>
+    <p>✔ Results Analysis</p>
+    <p>✔ Faculty Performance</p>
+</div>
+
+<!-- Notifications -->
+<!-- Notifications -->
+<div id="notify" class="card" style="display:none;">
+    <h2>Send Notification</h2>
+    <textarea placeholder="Message to all students/faculty"></textarea>
+    <button>Send</button>
+</div>
+
+<!-- ✅ SEARCH (SEPARATE) -->
+<div id="search" class="card" style="display:none;">
+    <h2>Search Student</h2>
+
+    <input type="text" id="searchRoll" placeholder="Enter Roll Number">
+
+    <button onclick="searchStudent()">Search</button>
+
+    <p id="result"></p>
+</div>
+</div>
+
+</div>
+
+    
+</div>
+
+</div>
+
+<script>
+function show(section) {
+    let sections = [
+        "students","faculty","attendance","results",
+        "complaints","fees","reports","notify","search"
+    ];
+
+    sections.forEach(s => {
+        let el = document.getElementById(s);
+        if (el) el.style.display = "none";
+    });
+
+    document.getElementById(section).style.display = "block";
+}
+function searchStudent() {
+
+    let roll = document.getElementById("searchRoll").value.trim();
+
+    let students = JSON.parse(localStorage.getItem("students")) || [];
+
+    let student = students.find(s =>
+        s.roll.toUpperCase() === roll.toUpperCase()
+    );
+
+    if (!student) {
+        document.getElementById("result").innerText = "❌ Student not found";
+        return;
+    }
+
+    document.getElementById("result").innerHTML = `
+        <b>Name:</b> ${student.name} <br>
+        <b>Email:</b> ${student.email} <br>
+        <b>Roll:</b> ${student.roll}
+    `;
+}
+
+
+
+// 🔐 CHECK LOGIN
+function loginAdmin() {
+
+    let email = document.getElementById("email").value;
+    let password = document.getElementById("password").value;
+
+    // ✅ Dummy admin
+    let admin = {
+        name: "Principal",
+        email: "admin@gmail.com",
+        password: "admin123",
+        role: "admin"
+    };
+
+    if (email === admin.email && password === admin.password) {
+
+        // ✅ SAVE USER
+        localStorage.setItem("currentUser", JSON.stringify(admin));
+
+        // ✅ REDIRECT
+        window.location.href = "admin.html"; // your dashboard file
+    } else {
+        alert("Invalid Admin Login ❌");
+    }
+}
+
+// ✅ SHOW ADMIN NAME
+document.querySelector(".header").insertAdjacentHTML("beforeend", `
+    <p><b>Name:</b> ${user.name}</p>
+`);
+
+
+</script>
+
+</body>
+</html>

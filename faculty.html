@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Faculty Dashboard</title>
+
+<style>
+body { font-family: Arial; margin:0; background:#eef2f3; }
+
+/* Header */
+.header {
+    text-align:center;
+    background:white;
+    padding:10px;
+    box-shadow:0 0 5px #ccc;
+}
+.logo {
+    width:60px;
+}
+
+/* Sidebar */
+.sidebar {
+    width:220px; height:100vh; background:#34495e;
+    color:white; position:fixed; padding-top:20px;
+}
+.sidebar h2 { text-align:center; }
+.sidebar a {
+    display:block; color:white; padding:12px; text-decoration:none;
+}
+.sidebar a:hover { background:#2c3e50; }
+
+/* Main */
+.main { margin-left:220px; padding:20px; margin-top:80px; }
+
+.card {
+    background:white; padding:20px; margin-bottom:20px;
+    border-radius:10px; box-shadow:0 0 10px #ccc;
+}
+
+input, textarea, select {
+    width:100%; padding:10px; margin:8px 0;
+}
+
+button {
+    padding:10px; background:#27ae60;
+    color:white; border:none; border-radius:5px;
+}
+
+table {
+    width:100%; border-collapse:collapse;
+}
+table, th, td {
+    border:1px solid #ccc; padding:10px;
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- ✅ HEADER (CORRECT PLACE) -->
+<div class="header">
+    
+    <h2>Faculty Dashboard - JNTUH UCEJ</h2>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <h2>Faculty</h2>
+    <a href="#" onclick="showSection('schedule')">Class Schedule</a>
+    <a href="#" onclick="showSection('attendance')">Attendance</a>
+    <a href="#" onclick="showSection('marks')">Upload Marks</a>
+    <a href="#" onclick="showSection('notes')">Faculty Notes</a>
+    <a href="#" onclick="showSection('parent')">Parent Info</a>
+    <a href="#" onclick="showSection('search')">Search Student</a>
+    <a href="index.html">Logout</a>
+</div>
+
+<!-- Main -->
+<div class="main">
+
+<!-- Schedule -->
+<div id="schedule" class="card">
+    <h2>Add Class Schedule</h2>
+    <input type="text" id="subject" placeholder="Subject">
+    <input type="text" id="time" placeholder="Time">
+    <button onclick="addSchedule()">Add</button>
+    <p id="scheduleMsg"></p>
+</div>
+
+<!-- Attendance -->
+<div id="attendance" class="card" style="display:none;">
+    <h2>Mark Attendance</h2>
+    <input type="text" id="studentName" placeholder="Student Name">
+    <select id="status">
+        <option>Present</option>
+        <option>Absent</option>
+    </select>
+    <button onclick="markAttendance()">Submit</button>
+    <p id="attMsg"></p>
+</div>
+
+<!-- Marks -->
+<div id="marks" class="card" style="display:none;">
+    <h2>Upload Exam Marks</h2>
+    <input type="text" id="student" placeholder="Student Name">
+    <input type="number" id="marksInput" placeholder="Marks">
+    <button onclick="uploadMarks()">Upload</button>
+    <p id="marksMsg"></p>
+</div>
+
+<!-- Notes -->
+<div id="notes" class="card" style="display:none;">
+    <h2>Faculty Notes / Customs</h2>
+    <textarea id="noteText" rows="4" placeholder="Write notes..."></textarea>
+    <button onclick="saveNote()">Save</button>
+    <p id="noteMsg"></p>
+</div>
+
+<!-- Parent Info -->
+<div id="parent" class="card" style="display:none;">
+    <h2>Send Info to Parents</h2>
+
+    <input type="text" id="parentName" placeholder="Parent Name"><br><br>
+    
+    <input type="text" id="parentMobile" placeholder="Parent Mobile Number"><br><br>
+    
+    <textarea id="message" rows="4" placeholder="Student performance message"></textarea><br><br>
+    
+    <button onclick="sendMessage()">Send</button>
+
+    <p id="parentMsg"></p>
+    </div>
+
+<div id="search" class="card" style="display:none;">
+        <h2>Search Student</h2>
+
+        <input type="text" id="searchRoll" placeholder="Enter Roll Number">
+
+        <button onclick="searchStudent()">Search</button>
+
+        <p id="result"></p>
+    </div>
+
+
+
+
+<script>
+function showSection(section) {
+    const sections = ["schedule","attendance","marks","notes","parent","search"];
+    sections.forEach(id => {
+        document.getElementById(id).style.display = "none";
+    });
+    document.getElementById(section).style.display = "block";
+}
+
+function addSchedule() {
+    document.getElementById("scheduleMsg").innerText = "Schedule added!";
+}
+
+function markAttendance() {
+    let name = document.getElementById("studentName").value;
+    let status = document.getElementById("status").value;
+
+    let attendance = JSON.parse(localStorage.getItem("attendance")) || [];
+
+    attendance.push({
+        faculty: user.name,
+        student: name,
+        status: status
+    });
+
+    localStorage.setItem("attendance", JSON.stringify(attendance));
+
+    document.getElementById("attMsg").innerText = "Attendance saved!";
+}
+
+function uploadMarks() {
+    let name = document.getElementById("student").value;
+    let marks = document.getElementById("marksInput").value;
+
+    let allMarks = JSON.parse(localStorage.getItem("marks")) || [];
+
+    allMarks.push({
+        faculty: user.name,
+        student: name,
+        marks: marks
+    });
+
+    localStorage.setItem("marks", JSON.stringify(allMarks));
+
+    document.getElementById("marksMsg").innerText = "Marks saved!";
+}
+function saveNote() {
+    let text = document.getElementById("noteText").value;
+
+    let notes = JSON.parse(localStorage.getItem("notes")) || [];
+
+    notes.push({
+        faculty: user.name,
+        note: text
+    });
+
+    localStorage.setItem("notes", JSON.stringify(notes));
+
+    document.getElementById("noteMsg").innerText = "Note saved!";
+}
+
+function sendMessage() {
+    let parent = document.getElementById("parentName").value;
+    let mobile = document.getElementById("parentMobile").value;
+    let msg = document.getElementById("message").value;
+
+    let messages = JSON.parse(localStorage.getItem("messages")) || [];
+
+    messages.push({
+        faculty: user.name,
+        parent: parent,
+        mobile: mobile,
+        message: msg
+    });
+
+    localStorage.setItem("messages", JSON.stringify(messages));
+
+    document.getElementById("parentMsg").innerText = "Message stored!";
+}
+function searchStudent() {
+
+    let roll = document.getElementById("searchRoll").value.trim();
+
+    let students = JSON.parse(localStorage.getItem("students")) || [];
+
+    let student = students.find(s =>
+        s.roll.toUpperCase() === roll.toUpperCase()
+    );
+
+    if (!student) {
+        document.getElementById("result").innerText = "❌ Student not found";
+        return;
+    }
+
+    document.getElementById("result").innerHTML = `
+        <b>Name:</b> ${student.name} <br>
+        <b>Email:</b> ${student.email} <br>
+        <b>Roll:</b> ${student.roll}
+    `;
+}
+
+
+
+
+
+// 🔐 CHECK LOGIN
+let user = JSON.parse(localStorage.getItem("currentUser"));
+
+if (!user || user.role !== "faculty") {
+    window.location.href = "index.html";
+}
+
+// ✅ SHOW FACULTY NAME
+document.querySelector(".header").insertAdjacentHTML("beforeend", `
+    <p><b>Name:</b> ${user.name}</p>
+`);
+
+// ✅  DATA (runs only once)
+if (!localStorage.getItem("dummyLoaded")) {
+
+    // user (Faculty)
+    localStorage.setItem("currentUser", JSON.stringify({
+        name: "G.Narasimha",
+        role: "faculty"
+    }));
+
+    //  Schedule
+    localStorage.setItem("schedule", JSON.stringify([
+        { subject: "DM", time: "10:00 AM" },
+        { subject: "JAVA", time: "1:00 PM" }
+    ]));
+
+    // Attendance
+    localStorage.setItem("attendance", JSON.stringify([
+        { faculty: "G.Narasimha", student: "Sushma", status: "Present" },
+        { faculty: "G.Narasimha", student: "Akashaya", status: "Absent" },
+        { faculty: "G.Narasimha", student: "Tharun", status: "Present"},
+         { faculty: "G.Narasimha", student: "Anvesh", status: "Present"}
+    ]));
+
+    //  Marks
+    localStorage.setItem("marks", JSON.stringify([
+        { faculty: "G.Narasimha", student: "Sushma", marks: 90 },
+        { faculty: "G.Narasimha", student: "Akshaya", marks: 78 },
+         { faculty: "G.Narasimha", student: "Tharun", marks: 88},
+         { faculty: "G.Narasimha", student: "Anvesh", marks: 75}
+    ]));
+
+    //  Notes
+    localStorage.setItem("notes", JSON.stringify([
+        { faculty: "G.Narasimha", note: "Complete Unit 1 before exam" }
+    ]));
+
+    //  Parent Messages
+    localStorage.setItem("messages", JSON.stringify([
+        { faculty: "G.Narasimha", parent: "Mr. Rao", mobile: "9876543210", message: "Your child is doing well." }
+    ]));
+
+    function searchStudent() {
+
+    let roll = document.getElementById("searchRoll").value.trim();
+
+    let students = JSON.parse(localStorage.getItem("students")) || [];
+
+    let student = students.find(s =>
+        s.roll.toUpperCase() === roll.toUpperCase()
+    );
+
+    if (!student) {
+        document.getElementById("result").innerText = "❌ Student not found";
+        return;
+    }
+
+    document.getElementById("result").innerHTML = `
+        <b>Name:</b> ${student.name} <br>
+        <b>Email:</b> ${student.email} <br>
+        <b>Roll:</b> ${student.roll}
+    `;
+}
+
+    localStorage.setItem("Loaded", "true");
+}
+
+</script>
+
+
+</body>
+</html>
